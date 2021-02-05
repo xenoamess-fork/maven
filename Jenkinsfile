@@ -129,8 +129,8 @@ for (String os in runITsOses) {
         }
         // Verify that ITs can still be used for older Maven versions
         String m3 = '3.6.3'
-        String stageId = "${os}-jdk${buildJdk}-${m3}"
-        String stageLabel = "Run ITs ${os.capitalize()} Java ${buildJdk} Maven ${m3}"
+        stageId = "${os}-jdk${buildJdk}-${m3}"
+        stageLabel = "Run ITs ${os.capitalize()} Java ${buildJdk} Maven ${m3}"
         runITsTasks[stageId] = {
             node(jenkinsEnv.nodeSelection(osLabel)) {
                 stage("${stageLabel}") {
