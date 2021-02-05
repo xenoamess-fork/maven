@@ -150,7 +150,7 @@ for (String os in runITsOses) {
                             withMaven(jdk: jdkName, maven: mvnName, mavenLocalRepo:"${WORK_DIR}/it-local-repo", options:[
                                 junitPublisher(ignoreAttachments: false)
                             ]) {
-                                String cmd = "${runITscommand} -DmavenDistro=$WORK_DIR/dists/apache-maven-bin.zip -Dmaven.test.failure.ignore=true -DmavenVersion=${m3}"
+                                String cmd = "${runITscommand} -Dmaven.test.failure.ignore=true -DmavenVersion=${m3}"
                                 if (isUnix()) {
                                     sh "${cmd}"
                                 } else {
