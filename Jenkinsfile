@@ -130,10 +130,9 @@ for (String os in runITsOses) {
         // Verify that ITs can still be used for older Maven versions
         String m3 = '3.6.3'
         stageId = "${os}-jdk${buildJdk}-${m3}"
-        stageLabel = "Run ITs ${os.capitalize()} Java ${buildJdk} Maven ${m3}"
         runITsTasks[stageId] = {
             node(jenkinsEnv.nodeSelection(osLabel)) {
-                stage("${stageLabel}") {
+                stage("Run ITs ${os.capitalize()} Java ${buildJdk} Maven ${m3}") {
                     echo "NODE_NAME = ${env.NODE_NAME}"
                     // on Windows, need a short path or we hit 256 character limit for paths
                     // using EXECUTOR_NUMBER guarantees that concurrent builds on same agent
