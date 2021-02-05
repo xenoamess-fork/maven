@@ -127,6 +127,47 @@ for (String os in runITsOses) {
                 }
             }
         }
+		
+		// Verify that ITs can still be used for older Maven versions
+		String m3 = '3.6.3'
+		String stageId = "${os}-jdk${buildJdk}-${m3}"
+        String stageLabel = "Run ITs ${os.capitalize()} Java ${buildJdk} Maven ${m3}"
+        runITsTasks[stageId] = {
+            node(jenkinsEnv.nodeSelection(osLabel)) {
+                stage("${stageLabel}") {
+                    echo "NODE_NAME = ${env.NODE_NAME}"
+                    // on Windows, need a short path or we hit 256 character limit for paths
+                    // using EXECUTOR_NUMBER guarantees that concurrent builds on same agent
+                    // will not trample each other plus workaround for JENKINS-52657
+                    dir(isUnix() ? 'test' : "c:\\mvn-it-${EXECUTOR_NUMBER}.tmp") {
+                        def WORK_DIR=pwd()
+                        checkout tests
+                        if (isUnix()) {
+                            sh "rm -rvf $WORK_DIR/dists $WORK_DIR/it-local-repo"
+                        } else {
+                            bat "if exist it-local-repo rmdir /s /q it-local-repo"
+                            bat "if exist dists         rmdir /s /q dists"
+                        }
+                        try {
+                            withMaven(jdk: jdkName, maven: mvnName, mavenLocalRepo:"${WORK_DIR}/it-local-repo", options:[
+                                junitPublisher(ignoreAttachments: false)
+                            ]) {
+                                String cmd = "${runITscommand} -DmavenDistro=$WORK_DIR/dists/apache-maven-bin.zip -Dmaven.test.failure.ignore=true -DmavenVersion={m3}"
+                                if (isUnix()) {
+                                    sh "${cmd}"
+                                } else {
+                                    bat "${cmd}"
+                                }
+                            }
+                        } finally {
+                            archiveDirs(stageId, ['core-it-suite-logs':'core-it-suite/target/test-classes',
+                                                  'core-it-suite-reports':'core-it-suite/target/surefire-reports'])
+                            deleteDir() // clean up after ourselves to reduce disk space
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
