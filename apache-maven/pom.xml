@@ -433,5 +433,55 @@ under the License.
         <finalName>${project.artifactId}</finalName>
       </build>
     </profile>
+    <profile>
+      <id>native</id>
+      <dependencies>
+        <!-- Ensure all necessary dependencies for the CLI are available for native image building -->
+        <!-- The existing dependencies of apache-maven should cover this -->
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>build-native</id>
+                <goals>
+                  <goal>compile-no-fork</goal> <!-- compile-no-fork is often preferred -->
+                </goals>
+                <phase>package</phase> <!-- Build native image during package phase -->
+              </execution>
+            </executions>
+            <configuration>
+              <imageName>mvn-native</imageName> <!-- Output executable name -->
+              <mainClass>org.apache.maven.cli.MavenCli</mainClass>
+              <buildArgs>
+                <buildArg>--no-fallback</buildArg>
+                <buildArg>--enable-url-protocols=http,https</buildArg>
+                <buildArg>-Dfile.encoding=UTF-8</buildArg>
+                <buildArg>-Dio.netty.resolver.dns.macos.maxQueries=1</buildArg>
+                <!-- Consider adding if build fails related to these classes -->
+                <buildArg>--initialize-at-build-time=org.apache.maven.cli.transfer.Slf4jMavenTransferListener,org.apache.maven.cli.transfer.QuietMavenTransferListener,org.apache.maven.cli.transfer.ConsoleMavenTransferListener,org.slf4j.impl.StaticLoggerBinder,ch.qos.logback.classic.LoggerContext,ch.qos.logback.core.status.StatusManager,ch.qos.logback.core.util.Loader</buildArg>
+                <buildArg>--initialize-at-run-time=org.fusesource.jansi.internal.Kernel32,org.fusesource.jansi.internal.WindowsSupport,org.fusesource.jansi.internal.CLibrary,org.jline.terminal.impl.jna.linux.CLibrary,org.jline.terminal.impl.jna.osx.CLibrary</buildArg>
+                <buildArg>-H:InitialCollectionPolicy=com.oracle.svm.core.genscavenge.AggressiveHeapPolicy</buildArg>
+                <!-- <buildArg>--static</buildArg> --> <!-- Statically link, requires musl-libc and static libs -->
+                <!-- <buildArg>-agentlib:native-image-agent=config-output-dir=META-INF/native-image</buildArg> --> <!-- For config generation -->
+              </buildArgs>
+              <agent>
+                <!-- Configuration for agent if used via native-maven-plugin itself -->
+                <!-- <configOutputDirectories><directory>META-INF/native-image/${project.groupId}/${project.artifactId}</directory></configOutputDirectories> -->
+                <!-- <userCodeFilterPath>user-code-filter.json</userCodeFilterPath> -->
+              </agent>
+              <!--
+              <metadataRepository>
+                <enabled>true</enabled>
+              </metadataRepository>
+              -->
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>
