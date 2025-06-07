@@ -171,6 +171,7 @@ under the License.
     <woodstoxVersion>7.1.0</woodstoxVersion>
     <xmlunitVersion>2.10.1</xmlunitVersion>
     <jacocoArgLine />
+    <graalvm.native.maven.plugin.version>0.10.6</graalvm.native.maven.plugin.version>
   </properties>
 
   <!--bootstrap-start-comment-->
@@ -813,6 +814,11 @@ under the License.</licenseText>
             </dependency>
           </dependencies>
         </plugin>
+        <plugin>
+          <groupId>org.graalvm.buildtools</groupId>
+          <artifactId>native-maven-plugin</artifactId>
+          <version>${graalvm.native.maven.plugin.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -1172,6 +1178,49 @@ under the License.</licenseText>
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>native</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <version>3.3.1</version>
+            <executions>
+              <execution>
+                <id>copy-resources</id>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <!-- here the phase you need -->
+                <phase>validate</phase>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>src/main/resources</directory>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.graalvm.buildtools</groupId>
+            <artifactId>native-maven-plugin</artifactId>
+            <!-- Configuration for the native-maven-plugin can be added here if needed globally for this profile -->
+            <!-- For specific executions, it will be configured in the apache-maven module -->
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <!-- Append native-image-agent to existing jacocoArgLine or other argLine configurations -->
+              <argLine>@{jacocoArgLine} -agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image/${project.groupId}/${project.artifactId}</argLine>
+            </configuration>
           </plugin>
         </plugins>
       </build>

@@ -20,6 +20,7 @@ package org.apache.maven.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,12 @@ public abstract class AbstractNode implements Node {
     @Override
     public Node filter(Predicate<Node> filter) {
         List<Node> children =
-                getChildren().stream().filter(filter).map(n -> n.filter(filter)).collect(Collectors.toList());
+                getChildren().stream().filter(filter).map(new Function<Node, Node>() {
+                    @Override
+                    public Node apply(Node n) {
+                        return n.filter(filter);
+                    }
+                }).collect(Collectors.toList());
         return new WrapperNode(this, Collections.unmodifiableList(children));
     }
 

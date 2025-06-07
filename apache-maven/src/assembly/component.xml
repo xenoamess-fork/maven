@@ -103,5 +103,14 @@ under the License.
       <directory>src/assembly/maven/lib</directory>
       <outputDirectory>lib</outputDirectory>
     </fileSet>
+    <!-- Add native executable -->
+    <fileSet>
+      <directory>${project.build.directory}</directory> <!-- This is the target/ directory of the apache-maven module -->
+      <outputDirectory>bin</outputDirectory>
+      <includes>
+        <include>mvn-native</include> <!-- As specified by <imageName> in native-maven-plugin -->
+      </includes>
+      <fileMode>0755</fileMode> <!-- Set execute permissions -->
+    </fileSet>
   </fileSets>
 </component>

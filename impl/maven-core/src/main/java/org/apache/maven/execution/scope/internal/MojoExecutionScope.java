@@ -20,6 +20,7 @@ package org.apache.maven.execution.scope.internal;
 
 import java.util.Collection;
 import java.util.IdentityHashMap;
+import java.util.function.Supplier;
 
 import com.google.inject.Key;
 import com.google.inject.Provider;
@@ -37,18 +38,39 @@ public class MojoExecutionScope extends org.apache.maven.impl.di.MojoExecutionSc
         implements Scope, MojoExecutionListener {
 
     public <T> void seed(Class<T> clazz, Provider<T> value) {
-        getScopeState().seed(clazz, value::get);
+        getScopeState().seed(clazz, new Supplier<T>() {
+            @Override
+            public T get() {
+                return value.get();
+            }
+        });
     }
 
     public <T> Provider<T> scope(final Key<T> key, Provider<T> unscoped) {
         Object qualifier = key.getAnnotation() instanceof Named n ? n.value() : key.getAnnotation();
         org.apache.maven.di.Key<T> k =
                 org.apache.maven.di.Key.ofType(key.getTypeLiteral().getType(), qualifier);
-        return scope(k, unscoped::get)::get;
+        Supplier<T> scope = scope(k, new Supplier<T>() {
+            @Override
+            public T get() {
+                return unscoped.get();
+            }
+        });
+        return new Provider<T>() {
+            @Override
+            public T get() {
+                return scope.get();
+            }
+        };
     }
 
     public static <T> Provider<T> seededKeyProvider(Class<? extends T> clazz) {
-        return MojoExecutionScope.<T>seededKeySupplier(clazz)::get;
+        return new Provider<T>() {
+            @Override
+            public T get() {
+                return MojoExecutionScope.<T>seededKeySupplier(clazz).get();
+            }
+        };
     }
 
     public void beforeMojoExecution(MojoExecutionEvent event) throws MojoExecutionException {

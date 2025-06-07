@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.function.Function;
 import org.apache.maven.api.DependencyScope;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -304,7 +305,12 @@ public abstract class AbstractArtifactComponentTestCase // extends PlexusTestCas
     }
 
     protected DefaultRepositorySystemSession initRepoSession() throws Exception {
-        DefaultRepositorySystemSession session = new DefaultRepositorySystemSession(h -> false);
+        DefaultRepositorySystemSession session = new DefaultRepositorySystemSession(new Function<Runnable, Boolean>() {
+            @Override
+            public Boolean apply(Runnable h) {
+                return false;
+            }
+        });
         session.setScopeManager(new ScopeManagerImpl(Maven4ScopeManagerConfiguration.INSTANCE));
         session.setArtifactDescriptorPolicy(new SimpleArtifactDescriptorPolicy(true, true));
         DependencyTraverser depTraverser = new FatArtifactTraverser();

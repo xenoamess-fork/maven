@@ -305,4 +305,94 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
+  <!--  <profiles>-->
+  <!--    <profile>-->
+  <!--      <id>native</id>-->
+  <!--      <build>-->
+  <!--        <pluginManagement>-->
+  <!--          <plugins>-->
+  <!--            <plugin>-->
+  <!--              <groupId>org.graalvm.buildtools</groupId>-->
+  <!--              <artifactId>native-maven-plugin</artifactId>-->
+  <!--              <version>${native.maven.plugin.version}</version>-->
+  <!--              <extensions>true</extensions>-->
+  <!--              <configuration>-->
+  <!--                <mainClass>org.apache.maven.cling.MavenCling</mainClass>-->
+  <!--                <buildArgs>-->
+  <!--                  <buildArg>&#45;&#45;no-fallback</buildArg>-->
+  <!--                  <buildArg>&#45;&#45;enable-http</buildArg>-->
+  <!--                  <buildArg>&#45;&#45;enable-https</buildArg>-->
+  <!--                  <buildArg>&#45;&#45;initialize-at-build-time</buildArg>-->
+  <!--                  <buildArg>&#45;&#45;report-unsupported-elements-at-runtime</buildArg>-->
+  <!--                </buildArgs>-->
+  <!--                <classesDirectory>${project.build.outputDirectory}</classesDirectory>-->
+  <!--                <requiredVersion>22.3</requiredVersion>-->
+  <!--                <fallback>false</fallback>-->
+  <!--                <agent>-->
+  <!--                  <enabled>true</enabled>-->
+  <!--                  <defaultMode>Standard</defaultMode>-->
+  <!--                  <modes>-->
+  <!--                    <direct>config-output-dir=${project.build.directory}/native/agent-output</direct>-->
+  <!--                  </modes>-->
+  <!--                  <options>-->
+  <!--                    <builtinCallerFilter>true</builtinCallerFilter>-->
+  <!--                    <builtinHeuristicFilter>true</builtinHeuristicFilter>-->
+  <!--                    <enableExperimentalPredefinedClasses>true</enableExperimentalPredefinedClasses>-->
+  <!--                    <enableExperimentalUnsafeAllocationTracing>true</enableExperimentalUnsafeAllocationTracing>-->
+  <!--                    <trackReflectionMetadata>true</trackReflectionMetadata>-->
+  <!--                  </options>-->
+  <!--                  <metadataCopy>-->
+  <!--                    <disabledStages>-->
+  <!--                      <stage>main</stage>-->
+  <!--                    </disabledStages>-->
+  <!--                    <merge>true</merge>-->
+  <!--                    <outputDirectory>${project.basedir}/src/main/resources/META-INF/native-image/maven.auto</outputDirectory>-->
+  <!--                  </metadataCopy>-->
+  <!--                </agent>-->
+  <!--              </configuration>-->
+  <!--              <executions>-->
+  <!--                <execution>-->
+  <!--                  <id>add-reachability-metadata</id>-->
+  <!--                  <goals>-->
+  <!--                    <goal>add-reachability-metadata</goal>-->
+  <!--                  </goals>-->
+  <!--                </execution>-->
+  <!--                <execution>-->
+  <!--                  <id>native-build</id>-->
+  <!--                  <goals>-->
+  <!--                    <goal>compile-no-fork</goal>-->
+  <!--                  </goals>-->
+  <!--                  <phase>package</phase>-->
+  <!--                </execution>-->
+  <!--                <execution>-->
+  <!--                  <id>metadata-copy</id>-->
+  <!--                  <goals>-->
+  <!--                    <goal>metadata-copy</goal>-->
+  <!--                  </goals>-->
+  <!--                  <phase>package</phase>-->
+  <!--                </execution>-->
+  <!--                &lt;!&ndash;                            <execution>&ndash;&gt;-->
+  <!--                &lt;!&ndash;                                <id>native-test</id>&ndash;&gt;-->
+  <!--                &lt;!&ndash;                                <goals>&ndash;&gt;-->
+  <!--                &lt;!&ndash;                                    <goal>test</goal>&ndash;&gt;-->
+  <!--                &lt;!&ndash;                                </goals>&ndash;&gt;-->
+  <!--                &lt;!&ndash;                                <phase>test</phase>&ndash;&gt;-->
+  <!--                &lt;!&ndash;                            </execution>&ndash;&gt;-->
+  <!--              </executions>-->
+  <!--            </plugin>-->
+  <!--          </plugins>-->
+  <!--        </pluginManagement>-->
+  <!--        <plugins>-->
+  <!--          <plugin>-->
+  <!--            <groupId>org.graalvm.buildtools</groupId>-->
+  <!--            <artifactId>native-maven-plugin</artifactId>-->
+  <!--            <version>${native.maven.plugin.version}</version>-->
+  <!--            <extensions>true</extensions>-->
+  <!--          </plugin>-->
+  <!--        </plugins>-->
+  <!--      </build>-->
+  <!--    </profile>-->
+  <!--  </profiles>-->
+
 </project>
